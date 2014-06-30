@@ -13,7 +13,8 @@
     "font-awesome": "~4.1.0",
     "select2": "~3.5.0",
     "uploader": "~0.9.0",
-    "bootstrap-notify": "~0.1.0"
+    "bootstrap-notify": "~0.1.0",
+    "jquery.scrollTo": "~1.4.12"
   },
   "devDependencies": {}
 }
