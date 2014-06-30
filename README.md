@@ -1,7 +1,7 @@
 juggler
 =======
 
-An UI lib based on Backbone.Marionette and Bootstrap3
+基于Backbone.Marionette和Bootstrap3的前端组件库
 
 
 ## 安装
