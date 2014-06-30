@@ -22,7 +22,7 @@
 
   var previousJuggler = root.Juggler;
 
-  var Juggler = Backbone.Juggler = {};
+  var Juggler = Backbone.Juggler = new Marionette.Application();
 
   Juggler.VERSION = '0.0.1';
 
@@ -33,6 +33,40 @@
 
   Backbone.Juggler = Juggler;
 
+
+  Juggler.Controller = Marionette.Controller.extend({
+
+  });
+
+  Juggler.Model = Backbone.Model.extend({
+
+  });
+
+  Juggler.Collection = Backbone.Collection.extend({
+
+  });
+
+  Juggler.module('Templates',function(Templates,Juggler,Backbone,Marionette,$,_){
+
+  });
+
+  Juggler.module('Views',function(Views,Juggler,Backbone,Marionette,$,_){
+
+  });
+
+  Juggler.module('Widgets',function(Widgets,Juggler,Backbone,Marionette,$,_){
+
+  });
+
+  Juggler.module('Enities',function(Enities,Juggler,Backbone,Marionette,$,_){
+
+  });
+
+
+  Juggler.on('initialize:after',function(){
+    if(Backbone.history)
+        Backbone.history.start();
+  });
 
 
   return Juggler;
