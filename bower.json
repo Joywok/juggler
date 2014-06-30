@@ -1,0 +1,17 @@
+{
+  "name": "juggler",
+  "private": true,
+  "dependencies": {
+    "modernizr": "~2.6.2",
+    "jquery": "~1.11.0",
+    "underscore": "~1.6.0",
+    "backbone": "~1.1.2",
+    "marionette": "~2.0.1",
+    "backbone-forms": "~0.14.0",
+    "bootstrap": "~3.2.0",
+    "font-awesome": "~4.1.0",
+    "select2": "~3.5.0",
+    "uploader": "~0.9.0"
+  },
+  "devDependencies": {}
+}
