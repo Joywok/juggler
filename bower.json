@@ -16,7 +16,8 @@
     "bootstrap-notify": "~0.1.0",
     "jquery.scrollTo": "~1.4.12",
     "bs-progressbar": "*",
-    "bootstrap3-dialog": "*"
+    "bootstrap3-dialog": "*",
+    "backgrid": "~0.3.5"
   },
   "devDependencies": {}
 }
