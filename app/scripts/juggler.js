@@ -48,9 +48,78 @@
 
   Juggler.module('Templates',function(Templates,Juggler,Backbone,Marionette,$,_){
 
+    //通用布局组件的模板
+    Templates.layout = function(data){
+        var $el = $('<div>');
+        $.each(data.regions,function(key,value){
+           var $item = $('<div>').addClass(data.regionClass)
+            if(value.indexOf('#')==0)
+                $item.attr('id',value.replace('#',''))
+            else if(value.indexOf('.')==0)
+                $item.addClass(value.split('.').join(' '))
+            $el.append($item);
+        });
+
+        return $el.html();
+    };
+
+
   });
 
   Juggler.module('Views',function(Views,Juggler,Backbone,Marionette,$,_){
+
+    Views.ItemView = Marionette.ItemView.extend({
+        constructor:function(){
+            this.options = Marionette.getOption(this,'defaults');
+            Marionette.ItemView.prototype.constructor.apply(this,arguments);
+        },
+        template:_.template('')
+    });
+
+    Views.EmptyView = Views.ItemView.extend({
+        className:'alert alert-warning',
+        template:Juggler.Templates.empty,
+        defaults:{text:'没有找到符合条件的数据！'},
+        serializeData:function(){return this.options}
+    });
+
+    Views.Layout = Marionette.LayoutView.extend({
+        constructor:function(options){
+            this.options = Marionette.getOption(this,'defaults');
+            this.regions = Marionette.getOption(this,'regions')||{};
+            Marionette.Layout.prototype.constructor.apply(this,arguments)
+        },
+        defaults:{
+            regionClass:'layout-region',
+            regions:{}
+        },
+        className:'row',
+        template:Juggler.Templates.layout,
+        onRender:function(){
+            var that= this,
+                regions = Marionette.getOption(this,'regions');
+            if(!_.isEmpty(regions))
+                this.addRegions(regions);
+            else
+                this.$el.find('.'+this.options.regionClass).each(function(i,item){
+                    var id = $(item).attr('id');
+                    if(id)that.addRegion(id,'#'+id)
+                });
+        },
+        serializeData:function(){
+            return this.options;
+        }
+    });
+
+    Views.CompositeView = Marionette.CompositeView.extend({
+        emptyView: Views.EmptyView,
+        itemViewContainer: "",
+        template: _.template(''),
+        getItemView: function (item) {
+            return Views[item.get('viewType')] || Marionette.getOption(this, "itemView") || this.constructor;
+        }
+    });
+
 
   });
 
