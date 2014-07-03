@@ -46,6 +46,8 @@
 
   });
 
+
+
   Juggler.module('Templates',function(Templates,Juggler,Backbone,Marionette,$,_){
 
     //通用布局组件的模板
@@ -115,8 +117,8 @@
         emptyView: Views.EmptyView,
         itemViewContainer: "",
         template: _.template(''),
-        getItemView: function (item) {
-            return Views[item.get('viewType')] || Marionette.getOption(this, "itemView") || this.constructor;
+        getChildView: function (item) {
+            return Views[item.get('viewType')] || Marionette.getOption(this, "childView") || this.constructor;
         }
     });
 
