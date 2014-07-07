@@ -54,11 +54,11 @@
     Templates.layout = function(data){
         var $el = $('<div>');
         $.each(data.regions,function(key,value){
-           var $item = $('<div>').addClass(data.regionClass)
+           var $item = $('<div>').addClass(data.regionClass);
             if(value.indexOf('#')==0)
-                $item.attr('id',value.replace('#',''))
+                $item.attr('id',value.replace('#',''));
             else if(value.indexOf('.')==0)
-                $item.addClass(value.split('.').join(' '))
+                $item.addClass(value.split('.').join(' '));
             $el.append($item);
         });
 
@@ -89,7 +89,7 @@
         constructor:function(options){
             this.options = Marionette.getOption(this,'defaults');
             this.regions = Marionette.getOption(this,'regions')||{};
-            Marionette.Layout.prototype.constructor.apply(this,arguments)
+            Marionette.Layout.prototype.constructor.apply(this,arguments);
         },
         defaults:{
             regionClass:'layout-region',
@@ -105,7 +105,7 @@
             else
                 this.$el.find('.'+this.options.regionClass).each(function(i,item){
                     var id = $(item).attr('id');
-                    if(id)that.addRegion(id,'#'+id)
+                    if(id)that.addRegion(id,'#'+id);
                 });
         },
         serializeData:function(){
@@ -123,13 +123,32 @@
     });
 
     Views.Form = Backbone.Form.extend({
+        events:{
+          'submit':'onSubmit'
+        },
         initialize:function(){
             Backbone.Form.prototype.initialize.apply(this,arguments);
-            console.log(this)
-            this.on('change',function(form){
-                console.log(this);
-                console.log(form)
+            
+            this.btnSubmit = this.$el.find(':submit').button('reset');
+            
+            this.on('change',function(editor){
+                var error=editor.validate();
+                this.hanleError(editor,error);
             });
+            this.on('blur',function(editor){
+                var error=editor.validate();
+                this.hanleError(editor,error);
+            });
+        },
+        hanleError:function(editor,error){
+          var field = this.fields[editor.key];
+          error?field.setError(error.message):field.clearError();
+        },
+        onSubmit:function(e){
+          e.preventDefault();
+          var errors = this.commit();
+          if(!errors)
+            this.model.save();
         }
     });
 
