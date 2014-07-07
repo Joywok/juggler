@@ -125,8 +125,10 @@
     Views.Form = Backbone.Form.extend({
         initialize:function(){
             Backbone.Form.prototype.initialize.apply(this,arguments);
-            this.on('change',function(){
-                console.log(arguments);
+            console.log(this)
+            this.on('change',function(form){
+                console.log(this);
+                console.log(form)
             });
         }
     });
