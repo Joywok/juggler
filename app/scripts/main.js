@@ -9,6 +9,12 @@ $(function(){
     notifyRegion:'#notify'
   });
 
+  Juggler.addInitializer(function(){
+
+    
+
+  });
+
   Juggler.start();
 
 });

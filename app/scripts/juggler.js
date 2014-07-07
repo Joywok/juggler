@@ -122,6 +122,15 @@
         }
     });
 
+    Views.Form = Backbone.Form.extend({
+        initialize:function(){
+            Backbone.Form.prototype.initialize.apply(this,arguments);
+            this.on('change',function(){
+                console.log(arguments);
+            });
+        }
+    });
+
 
   });
 
@@ -134,9 +143,11 @@
   });
 
 
-  Juggler.on('initialize:after',function(){
+  Juggler.on('start',function(){
+    
     if(Backbone.history)
         Backbone.history.start();
+        
   });
 
 
