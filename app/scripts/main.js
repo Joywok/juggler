@@ -16,11 +16,8 @@ $(function(){
             title:      { type: 'Select', options: ['Mr', 'Mrs', 'Ms'] },
             name:       {type:'Text',validators:['required']},
             email:      { validators: ['required', 'email'] },
-            birthday:   'Date',
-            //password:   'Password',
-            //address:    { type: 'NestedModel', model: Address },
-            //notes:      { type: 'List', itemType: 'Text' }
-        }
+        },
+        url:'test'
     });
 
     var user = new User();

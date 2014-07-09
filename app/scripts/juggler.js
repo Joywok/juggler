@@ -129,10 +129,21 @@
         initialize:function(options){
             this.submitText = options.submitText||'提交';
             this.errors = {};
-            this.isFirstValidate = true;
+            this.complete = true;
             Backbone.Form.prototype.initialize.apply(this,arguments);
             this.on('field:change field:blur',this.onFieldChange);
             this.on('render',this.onRender);
+            this.model.on('request',function(model,xhr){
+              this.complete=false;
+              this.toggleSubmit();
+              xhr.done(function(){
+                that.model.clear();
+              })
+              .allways(function(){
+                that.complete=true;
+                that.toggleSubmit();
+              })
+            })
         },
         handleEditorEvent:function(e,editor){
           Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
@@ -140,31 +151,43 @@
         },
         render:function(){
           Backbone.Form.prototype.render.apply(this,arguments);
-          this.trigger('render');
-        },
-        validateEditors:function(){
           
-        },
-        onRender:function(){
           var html = '<div class="form-group">\
           <div class="col-md-10 col-md-offset-2">\
           <input type="submit" class="btn btn-primary disabled" disabled="disabled">\
           </div></div>';
           this.$el.append(html);
+          this.trigger('render');
+        },
+        validateEditors:function(){
+          for(var i in this.fields){
+            var error = this.fields[i].editor.validate();
+            error?this.errors[i]=error:delete this.errors[i];
+          }
+        },
+        onRender:function(){
           this.btnSubmit = this.$el.find(':submit').val(this.submitText).button('reset');
           this.validateEditors();
+          this.toggleSubmit();
         },
         onSubmit:function(e){
+          var that = this;
+          
           e.preventDefault();
-          this.commit()?this.setError():this.model.save();
+          if(this.commit())return;
+          
+          this.model.save();
+          
         },
         onFieldChange:function(key){
           var errors = this.fields[key].validate();
-          errors?this.errors = _.extend(this.errors,errors)
-            :delete this.errors[key];
+          errors
+          ?this.errors[key]=errors
+          :delete this.errors[key];
+          this.toggleSubmit();
         },
         toggleSubmit:function(){
-          !this.isFirstValidate//||_.isEmpty(this.errors)
+          _.isEmpty(this.errors)&&this.complete
           ?this.btnSubmit.removeClass('disabled').removeAttr('disabled')
           :this.btnSubmit.addClass('disabled').attr('disabled','disabled')
         }
