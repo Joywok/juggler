@@ -121,78 +121,86 @@
             return Views[item.get('viewType')] || Marionette.getOption(this, "childView") || this.constructor;
         }
     });
-
-    Views.Form = Backbone.Form.extend({
-        events:{
-          'submit':'onSubmit'
-        },
-        initialize:function(options){
-            this.submitText = options.submitText||'提交';
-            this.errors = {};
-            this.complete = true;
-            Backbone.Form.prototype.initialize.apply(this,arguments);
-            this.on('field:change field:blur',this.onFieldChange);
-            this.on('render',this.onRender);
-            this.model.on('request',function(model,xhr){
-              this.complete=false;
-              this.toggleSubmit();
-              xhr.done(function(){
-                that.model.clear();
-              })
-              .allways(function(){
-                that.complete=true;
-                that.toggleSubmit();
-              })
-            })
-        },
-        handleEditorEvent:function(e,editor){
-          Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
-          this.trigger('field:'+e,editor.key);
-        },
-        render:function(){
-          Backbone.Form.prototype.render.apply(this,arguments);
-          
-          var html = '<div class="form-group">\
-          <div class="col-md-10 col-md-offset-2">\
-          <input type="submit" class="btn btn-primary disabled" disabled="disabled">\
-          </div></div>';
-          this.$el.append(html);
-          this.trigger('render');
-        },
-        validateEditors:function(){
-          for(var i in this.fields){
-            var error = this.fields[i].editor.validate();
-            error?this.errors[i]=error:delete this.errors[i];
-          }
-        },
-        onRender:function(){
-          this.btnSubmit = this.$el.find(':submit').val(this.submitText).button('reset');
-          this.validateEditors();
-          this.toggleSubmit();
-        },
-        onSubmit:function(e){
-          var that = this;
-          
-          e.preventDefault();
-          if(this.commit())return;
-          
-          this.model.save();
-          
-        },
-        onFieldChange:function(key){
-          var errors = this.fields[key].validate();
-          errors
-          ?this.errors[key]=errors
-          :delete this.errors[key];
-          this.toggleSubmit();
-        },
-        toggleSubmit:function(){
-          _.isEmpty(this.errors)&&this.complete
-          ?this.btnSubmit.removeClass('disabled').removeAttr('disabled')
-          :this.btnSubmit.addClass('disabled').attr('disabled','disabled')
-        }
+    
+    Views.FormBase = Backbone.Form.extend({
+      handleEditorEvent:function(e,editor){
+        Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
+        this.trigger('field:'+e,editor.key);
+      },
+      render:function(){
+        Backbone.Form.prototype.render.apply(this,arguments);
+        this.trigger('render');
+        return this;
+      },
+      
     });
-
+    
+    Views.Form = Juggler.Views.ItemView.extend({
+      defaults:{
+        submitText:'提交'
+      },
+      ui:{
+        submit:':submit'
+      },
+      events:{
+        submit:'onSubmit'
+      },
+      modelEvents:{
+        'request':'onRequest'
+      },
+      initialize:function(options){
+        this.errors = {};
+        this.complete = true;
+        this.form = new Views.FormBase(options);
+        this.form.on('field:change field:blur',this.validateField,this);
+      },
+      render:function(){
+        var $submit = $('<div>')
+          .addClass('form-group')
+          .append($('<div>')
+            .addClass('col-md-10 col-md-offset-2')
+            .append($('<input>')
+              .addClass('btn btn-primary ')
+              .val(this.options.submitText)
+              .attr({type:'submit'}))),
+          $form=this.form.render().$el.append($submit);
+        this.template=function(){return $form};
+        
+        Juggler.Views.ItemView.prototype.render.apply(this,arguments);
+        
+      },
+      validateField:function(key){
+        var error = this.form.fields[key].validate();
+        error?this.errors[key]=error:delete this.errors[key];
+        this.toggleSubmit();
+      },
+      validateEditors:function(){
+        for(var i in this.form.fields){
+          var error = this.form.fields[i].editor.validate();
+          if(error)this.errors[i]=error;
+        };
+      },
+      toggleSubmit:function(){
+        _.isEmpty(this.errors)&&this.complete
+        ?this.ui.submit.removeClass('disabled').removeAttr('disabled')
+        :this.ui.submit.addClass('disabled').attr('disabled','disabled')
+      },
+      onRender:function(){
+        this.validateEditors();
+        this.toggleSubmit();
+        this.ui.submit.button();
+      },
+      onSubmit:function(e){
+        e.preventDefault();
+        if(this.form.commit())return;
+        this.model.save();
+      },
+      onRequest:function(model,xhr){
+        var that = this;
+        this.ui.submit.button('loading');
+        xhr.always(function(){that.ui.submit.button('reset')});
+      }
+    })
 
   });
 
