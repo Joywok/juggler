@@ -6,3 +6,9 @@
 }
 
 
+#progress{
+    position:fixed;
+    top:-18px;
+    left:0;
+    width:100%;
+}

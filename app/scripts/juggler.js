@@ -122,6 +122,29 @@
         }
     });
     
+    Views.Item = Views.ItemView.extend({
+        tagName:'li',
+        template:_.template('<a data-target="#<%- value %>" data-toggle="tab"><%- name %></a>'),
+        ui:{
+            links:'a'
+        },
+        events:{
+            'click @ui.links':'onClick'
+        },
+        onClick:function(){
+            this.trigger('clicked',this.model)
+        }
+    });
+    
+    
+
+    Views.List = Views.CompositeView.extend({
+        tagName:'ul',
+        template:_.template(''),
+        itemView:Views.Item
+    });
+    
+    
     Views.FormBase = Backbone.Form.extend({
       handleEditorEvent:function(e,editor){
         Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
@@ -163,7 +186,8 @@
               .addClass('btn btn-primary ')
               .val(this.options.submitText)
               .attr({type:'submit'}))),
-          $form=this.form.render().$el.append($submit);
+          $form=this.form.render().$el
+          this.options.submitText&&$form.append($submit);
         this.template=function(){return $form};
         
         Juggler.Views.ItemView.prototype.render.apply(this,arguments);

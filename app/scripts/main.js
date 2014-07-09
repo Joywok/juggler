@@ -24,6 +24,8 @@ $(function(){
      form = new Juggler.Views.Form({model:user});
     
     Juggler.mainRegion.show(form);
+    
+    $('body').progressbar().data('progressbar').setPosition(20);
 
   });
 
