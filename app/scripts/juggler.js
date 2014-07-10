@@ -228,10 +228,13 @@
     
     Views.Progressbar = Views.ItemView.extend({
         className:'progress',
-        template:_.template('<div class="progress-bar progress-bar-<%- type %>"></div>'),
+        template:_.template('<div class="progress-bar"></div>'),
         defaults:{
             type:'success',
-            progress:0
+            progress:0,
+            text:'<%- value %>%',
+            textAlgin:'center',
+            showText:false
         },
         ui:{
             bar:'.progress-bar'
@@ -243,17 +246,20 @@
           'request':'onRequest'
         },
         initialize:function(){
+          this.progress = this.options.progress;
           _.bindAll(this,'onProgress','onComplete');
         },
         serializeData:function(){
             return this.options;
         },
         setProgress:function(progress){
-            var that = this;
-            this.ui.bar.css('width',progress+'%');
+            this.progress = progress;
+            this.ui.bar.css('width',progress+'%')
+              .text(progress+'%');
         },
         onRender:function(){
-          this.ui.bar.css('width',this.options.progress+'%');
+          this.ui.bar.addClass('progress-bar-'+this.options.type);
+          this.setProgress(this.progress);
         },
         onRequest:function(enity,xhr){
           xhr.progress(this.onProgress).complete(this.onComplete);
