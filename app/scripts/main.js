@@ -6,7 +6,8 @@ $(function(){
     mainRegion:'#main',
     footerRegion:'#footer',
     dialogRegion:'#dialog',
-    notifyRegion:'#notify'
+    notifyRegion:'#notify',
+    progressRegion:'#progress'
   });
 
   Juggler.addInitializer(function(){
@@ -22,10 +23,11 @@ $(function(){
 
     var user = new User();
      form = new Juggler.Views.Form({model:user});
+     
+    var progressbar = new Juggler.Views.Progressbar({progress:20});
     
     Juggler.mainRegion.show(form);
-    
-    $('body').progressbar().data('progressbar').setPosition(20);
+    Juggler.progressRegion.show(progressbar);
 
   });
 

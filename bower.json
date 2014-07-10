@@ -1,7 +1,7 @@
 {
   "name": "juggler",
   "version": "0.0.1",
-  "main":[
+  "main": [
     "app/scripts/juggler.js"
   ],
   "dependencies": {
@@ -16,7 +16,6 @@
     "uploader": "~0.9.0",
     "bootstrap-notify": "~0.1.0",
     "jquery.scrollTo": "~1.4.12",
-    "bs-progressbar": "*",
     "bootstrap3-dialog": "*",
     "backgrid": "~0.3.5",
     "underscore": "~1.6.0"

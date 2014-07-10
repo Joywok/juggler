@@ -224,7 +224,49 @@
         this.ui.submit.button('loading');
         xhr.always(function(){that.ui.submit.button('reset')});
       }
-    })
+    });
+    
+    Views.Progressbar = Views.ItemView.extend({
+        className:'progress',
+        template:_.template('<div class="progress-bar progress-bar-<%- type %>"></div>'),
+        defaults:{
+            type:'success',
+            progress:0
+        },
+        ui:{
+            bar:'.progress-bar'
+        },
+         modelEvents:{
+          'request':'onRequest'
+        },
+        collectionEvents:{
+          'request':'onRequest'
+        },
+        initialize:function(){
+          _.bindAll(this,'onProgress','onComplete');
+        },
+        serializeData:function(){
+            return this.options;
+        },
+        setProgress:function(progress){
+            var that = this;
+            this.ui.bar.css('width',progress+'%');
+        },
+        onRender:function(){
+          this.ui.bar.css('width',this.options.progress+'%');
+        },
+        onRequest:function(enity,xhr){
+          xhr.progress(this.onProgress).complete(this.onComplete);
+        },
+        onProgress:function(progress){
+          this.setProgress(progress);
+        },
+        onComplete:function(){
+          this.destroy();
+        }
+    });
+    
+    
 
   });
 
