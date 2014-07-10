@@ -231,10 +231,7 @@
         template:_.template('<div class="progress-bar"></div>'),
         defaults:{
             type:'success',
-            progress:0,
-            text:'<%- value %>%',
-            textAlgin:'center',
-            showText:false
+            progress:0
         },
         ui:{
             bar:'.progress-bar'
