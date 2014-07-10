@@ -172,6 +172,7 @@
         this.submitButton = null;
         this.on('field:change field:blur',this.validateField);
         this.model.on('request',this.onRequest,this);
+        this.model.on('change',this.onModelChange,this);
       },
       handleEditorEvent:function(e,editor){
         Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
@@ -210,6 +211,9 @@
         e.preventDefault();
         if(this.commit())return;
         this.model.save();
+      },
+      onModelChange:function(){
+        this.setValue(this.model.toJSON());
       },
       onRequest:function(model,xhr){
         var that = this;
