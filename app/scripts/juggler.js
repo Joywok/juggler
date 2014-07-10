@@ -64,6 +64,20 @@
 
         return $el.html();
     };
+    
+    Templates.form = _.template('\
+        <form class="form-horizontal" role="form">\
+          <div data-fieldsets></div>\
+          <% if (submitButton) { %>\
+            <div class="form-group">\
+            <div class="col-sm-10 col-sm-offset-2">\
+            <button type="submit" class="btn btn-primary "><%= submitButton %></button>\
+            </div>\
+            </div>\
+          <% } %>\
+        </form>\
+      ');
+
 
 
   });
@@ -146,85 +160,64 @@
     
     
     Views.FormBase = Backbone.Form.extend({
+      template:Juggler.Templates.form,
+      events:{
+        'submit':'onSubmit'
+      },
+      initialize:function(options){
+        Backbone.Form.prototype.initialize.apply(this,arguments);
+        this.options=options;
+        this.errors = {};
+        this.complete=true;
+        this.submitButton = null;
+        this.on('field:change field:blur',this.validateField);
+        this.model.on('request',this.onRequest,this);
+      },
       handleEditorEvent:function(e,editor){
         Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
         this.trigger('field:'+e,editor.key);
       },
+      templateData:function(){
+        return {submitButton:this.options.submitButton||false}
+      },
       render:function(){
         Backbone.Form.prototype.render.apply(this,arguments);
         this.trigger('render');
+        this.validateEditors();
+        this.toggleSubmit();
         return this;
       },
-      
-    });
-    
-    Views.Form = Juggler.Views.ItemView.extend({
-      defaults:{
-        submitText:'提交'
-      },
-      ui:{
-        submit:':submit'
-      },
-      events:{
-        submit:'onSubmit'
-      },
-      modelEvents:{
-        'request':'onRequest'
-      },
-      initialize:function(options){
-        this.errors = {};
-        this.complete = true;
-        this.form = new Views.FormBase(options);
-        this.form.on('field:change field:blur',this.validateField,this);
-      },
-      render:function(){
-        var $submit = $('<div>')
-          .addClass('form-group')
-          .append($('<div>')
-            .addClass('col-md-10 col-md-offset-2')
-            .append($('<input>')
-              .addClass('btn btn-primary ')
-              .val(this.options.submitText)
-              .attr({type:'submit'}))),
-          $form=this.form.render().$el
-          this.options.submitText&&$form.append($submit);
-        this.template=function(){return $form};
-        
-        Juggler.Views.ItemView.prototype.render.apply(this,arguments);
-        
-      },
       validateField:function(key){
-        var error = this.form.fields[key].validate();
+        var error = this.fields[key].validate();
         error?this.errors[key]=error:delete this.errors[key];
         this.toggleSubmit();
       },
       validateEditors:function(){
-        for(var i in this.form.fields){
-          var error = this.form.fields[i].editor.validate();
+        for(var i in this.fields){
+          var error = this.fields[i].editor.validate();
           if(error)this.errors[i]=error;
         };
       },
+      getSubmitButton:function(){
+        return this.submitButton?this.submitButton:this.submitButton=this.$el.find(':submit');
+      },
       toggleSubmit:function(){
         _.isEmpty(this.errors)&&this.complete
-        ?this.ui.submit.removeClass('disabled').removeAttr('disabled')
-        :this.ui.submit.addClass('disabled').attr('disabled','disabled')
-      },
-      onRender:function(){
-        this.validateEditors();
-        this.toggleSubmit();
-        this.ui.submit.button();
+        ?this.getSubmitButton().removeClass('disabled').removeAttr('disabled')
+        :this.getSubmitButton().addClass('disabled').attr('disabled','disabled')
       },
       onSubmit:function(e){
         e.preventDefault();
-        if(this.form.commit())return;
+        if(this.commit())return;
         this.model.save();
       },
       onRequest:function(model,xhr){
         var that = this;
-        this.ui.submit.button('loading');
-        xhr.always(function(){that.ui.submit.button('reset')});
+        this.getSubmitButton().button('loading');
+        xhr.always(function(){that.getSubmitButton().button('reset')});
       }
     });
+    
     
     Views.Progressbar = Views.ItemView.extend({
         className:'progress',

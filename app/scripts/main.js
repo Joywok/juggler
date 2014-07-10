@@ -22,7 +22,7 @@ $(function(){
     });
 
     var user = new User();
-     form = new Juggler.Views.Form({model:user});
+     form = new Juggler.Views.FormBase({model:user,submitButton:'提交'});
      
     var progressbar = new Juggler.Views.Progressbar({progress:20});
     
