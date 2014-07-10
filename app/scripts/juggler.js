@@ -218,7 +218,12 @@
       onRequest:function(model,xhr){
         var that = this;
         this.getSubmitButton().button('loading');
-        xhr.always(function(){that.getSubmitButton().button('reset')});
+        xhr.always(function(){
+          that.getSubmitButton().button('reset');
+        })
+        .success(function(){
+          that.model.clear();
+        });
       }
     });
     
