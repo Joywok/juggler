@@ -159,7 +159,7 @@
     });
     
     
-    Views.FormBase = Backbone.Form.extend({
+    Views.Form = Backbone.Form.extend({
       template:Juggler.Templates.form,
       events:{
         'submit':'onSubmit'

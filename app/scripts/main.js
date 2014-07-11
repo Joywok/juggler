@@ -22,12 +22,17 @@ $(function(){
     });
 
     var user = new User();
-     form = new Juggler.Views.FormBase({model:user,submitButton:'提交'});
+     form = new Juggler.Views.Form({model:user,submitButton:'提交'}).render().el;
      
     var progressbar = new Juggler.Views.Progressbar({progress:20});
     
-    Juggler.mainRegion.show(form);
+    //Juggler.mainRegion.show(form);
     Juggler.progressRegion.show(progressbar);
+    
+    BootstrapDialog.show({
+      title:'填写表单',
+      message:form
+    })
 
   });
 
