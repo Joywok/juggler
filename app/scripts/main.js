@@ -22,7 +22,7 @@ $(function(){
     });
 
     var user = new User();
-     form = new Juggler.Views.Form({model:user,submitButton:'提交'}).render().el;
+     form = new Juggler.Views.Form({model:user,submitButton:'提交'}).render();
      
     var progressbar = new Juggler.Views.Progressbar({progress:20});
     
@@ -31,7 +31,7 @@ $(function(){
     
     BootstrapDialog.show({
       title:'填写表单',
-      message:form
+      message:form.el
     })
 
   });

@@ -170,7 +170,8 @@
         this.errors = {};
         this.complete=true;
         this.submitButton = null;
-        this.on('field:change field:blur',this.validateField);
+        this.on('field:change field:blur',this.validateField,this);
+        this.on('validate',this.toggleSubmit,this);
         this.model.on('request',this.onRequest,this);
         this.model.on('change',this.onModelChange,this);
       },
@@ -185,19 +186,20 @@
         Backbone.Form.prototype.render.apply(this,arguments);
         this.trigger('render');
         this.validateEditors();
-        this.toggleSubmit();
+        
         return this;
       },
       validateField:function(key){
         var error = this.fields[key].validate();
         error?this.errors[key]=error:delete this.errors[key];
-        this.toggleSubmit();
+        this.trigger('validate',this.errors);
       },
       validateEditors:function(){
         for(var i in this.fields){
           var error = this.fields[i].editor.validate();
           if(error)this.errors[i]=error;
         };
+        this.trigger('validate',this.errors);
       },
       getSubmitButton:function(){
         return this.submitButton?this.submitButton:this.submitButton=this.$el.find(':submit');
@@ -214,6 +216,7 @@
       },
       onModelChange:function(){
         this.setValue(this.model.toJSON());
+        this.validateEditors();
       },
       onRequest:function(model,xhr){
         var that = this;
