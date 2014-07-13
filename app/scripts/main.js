@@ -24,15 +24,14 @@ $(function(){
     var user = new User();
      form = new Juggler.Views.Form({model:user,submitButton:'提交'}).render();
      
-    var progressbar = new Juggler.Views.Progressbar({progress:20});
+    //var progressbar = new Juggler.Views.Progressbar({progress:20});
     
     //Juggler.mainRegion.show(form);
-    Juggler.progressRegion.show(progressbar);
+    //Juggler.progressRegion.show(progressbar);
     
-    BootstrapDialog.show({
-      title:'填写表单',
-      message:form.el
-    })
+    var $button=$('<button>弹</button>');
+    $('#main').append($button)
+    $button.popover({title:'test',content:form.el,html:true})
 
   });
 
