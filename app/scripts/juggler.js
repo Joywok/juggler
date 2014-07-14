@@ -274,6 +274,83 @@
         }
     });
     
+    Views.Node = Marionette.ItemView.extend({
+      initialize:function(){
+        this.pNode=null;
+        this.childNodes=[];
+      }
+    });
+    
+    Views.Template = Marionette.LayoutView.extend({
+      //template:'aaa',
+      initialize:function(){
+        this.depth=0;
+        this.cursor=0;
+        this.state='blank';
+        this.node = new Views.Node();
+        this.tpl = this.getOption('template');
+        this.triggerMethod('blank');
+      },
+      onBlank:function(){
+        console.log(this.cursor);
+        //console.log(this.node);
+        if(this.cursor==this.tpl.length-1)return;
+        var cur = this.tpl[this.cursor];
+        switch(cur){
+          case '.':
+            this.triggerMethod('class');
+            break;
+          case  '#':
+            this.triggerMethod('id');
+            break;
+          case '(':
+            this.triggerMethod('group');
+            break;
+          case '+':
+            this.triggerMethod('siblings');
+            break;
+          case '>':
+            this.triggerMethod('children');
+            break;
+          default :
+            //if(cur.match(/\w/))
+            this.triggerMethod('tag');
+        }
+      },
+      onTag:function(){
+        console.log('on tag')
+        var tagName = this.tpl.match(/\w+/)[0];
+        this.node.tagName=tagName;
+        this.cursor+=tagName.length;
+        this.triggerMethod('blank');
+      },
+      onId:function(){
+        console.log('on id')
+      },
+      onSiblings:function(){
+        console.log('on siblings')
+        this.state='children';
+        this.cursor++;
+        
+        this.triggerMethod('blank')
+      },
+      onGroup:function(){
+        console.log('on group')
+      },
+      onChildren:function(){
+        console.log('on children')
+        this.state='children';
+        this.cursor++;
+        this.depth++;
+        this.triggerMethod('blank')
+      },
+      onClass:function(){
+        console.log('on class')
+      },
+      render:function(){
+        return this;
+      }
+    })
     
 
   });

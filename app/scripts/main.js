@@ -32,6 +32,11 @@ $(function(){
     var $button=$('<button>弹</button>');
     $('#main').append($button)
     $button.popover({title:'test',content:form.el,html:true})
+    
+    new Juggler.Views.Template({
+      template:'div>ul>li*3'
+    });
+    
 
   });
 
