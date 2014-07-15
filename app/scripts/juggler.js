@@ -170,6 +170,7 @@
         this.errors = {};
         this.complete=true;
         this.submitButton = null;
+        this.values = this.getValue();
         this.on('field:change field:blur',this.validateField,this);
         this.on('validate',this.toggleSubmit,this);
         this.model.on('request',this.onRequest,this);
@@ -202,7 +203,7 @@
         this.trigger('validate',this.errors);
       },
       getSubmitButton:function(){
-        return this.submitButton?this.submitButton:this.submitButton=this.$el.find(':submit');
+        return this.submitButton?this.submitButton:this.$el.find(':submit');
       },
       toggleSubmit:function(){
         _.isEmpty(this.errors)&&this.complete
@@ -215,14 +216,17 @@
         this.model.save();
       },
       onModelChange:function(){
-        this.setValue(this.model.toJSON());
+        var values = this.model.toJSON();
+        this.setValue(_.isEmpty(values)?this.values:values);
         this.validateEditors();
       },
       onRequest:function(model,xhr){
         var that = this;
-        this.getSubmitButton().button('loading');
+        that.complete=false;
+        this.toggleSubmit();
         xhr.always(function(){
-          that.getSubmitButton().button('reset');
+          that.complete=true;
+          that.toggleSubmit();
         })
         .success(function(){
           that.model.clear();

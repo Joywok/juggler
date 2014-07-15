@@ -26,12 +26,12 @@ $(function(){
      
     //var progressbar = new Juggler.Views.Progressbar({progress:20});
     
-    //Juggler.mainRegion.show(form);
+    Juggler.mainRegion.show(form);
     //Juggler.progressRegion.show(progressbar);
     
     var $button=$('<button>弹</button>');
-    $('#main').append($button)
-    $button.popover({title:'test',content:form.el,html:true})
+    //$('#main').append($button)
+    //$button.popover({title:'test',content:form.el,html:true})
     
     new Juggler.Views.Template({
       template:'div>ul>li*3'

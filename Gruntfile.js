@@ -9,6 +9,8 @@
 
 module.exports = function (grunt) {
 
+    var path = require('path');
+
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
@@ -61,6 +63,33 @@ module.exports = function (grunt) {
                     '<%= config.app %>/images/{,*/}*'
                 ]
             }
+        },
+
+        express: {
+          options: {
+            port: 3000,
+            hostname: '*'
+          },
+          livereload: {
+            options: {
+              server: path.resolve('./server'),
+              livereload: true,
+              serverreload: true,
+              bases: [path.resolve('./.tmp'), path.resolve(__dirname, config.app)]
+            }
+          },
+          test: {
+            options: {
+              server: path.resolve('./server'),
+              bases: [path.resolve('./.tmp'), path.resolve(__dirname, 'test')]
+            }
+          },
+          dist: {
+            options: {
+              server: path.resolve('./server'),
+              bases: path.resolve(__dirname, config.dist)
+            }
+          }
         },
 
         // The actual grunt server settings
@@ -337,6 +366,9 @@ module.exports = function (grunt) {
     });
 
 
+    grunt.loadNpmTasks('grunt-express');
+
+
     grunt.registerTask('serve', function (target) {
         if (target === 'dist') {
             return grunt.task.run(['build', 'connect:dist:keepalive']);
@@ -346,6 +378,7 @@ module.exports = function (grunt) {
             'clean:server',
             'concurrent:server',
             'autoprefixer',
+            //'express',
             'connect:livereload',
             'watch'
         ]);
