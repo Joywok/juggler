@@ -22,7 +22,8 @@ $(function(){
     });
 
     var user = new User();
-     form = new Juggler.Views.Form({model:user,submitButton:'提交'}).render();
+     form = new Juggler.Views.Test({model:user,submitButton:'提交'});
+     console.log(form)
      
     //var progressbar = new Juggler.Views.Progressbar({progress:20});
     
@@ -36,6 +37,8 @@ $(function(){
     new Juggler.Views.Template({
       template:'div>ul>li*3'
     });
+    
+    
     
 
   });

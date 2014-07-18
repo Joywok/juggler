@@ -229,7 +229,7 @@
           that.toggleSubmit();
         })
         .success(function(){
-          that.model.clear();
+          that.setValue(that.values);
         });
       }
     });
@@ -356,6 +356,29 @@
       }
     })
     
+    
+    Views.Test = Views.ItemView.extend({
+      defaults:{
+        submitButton:'提交'
+      },
+      template:Juggler.Templates.form,
+      serializeData:function(){
+        return this.options;
+      },
+      getTemplate:function(){
+        var that = this;
+        return function(){
+          return Backbone.Form.prototype.render.apply(that).$el.html()
+        }
+      },
+      templateData:function(){
+        return this.serializeData();
+      }
+    });
+    
+    //整合Backbone.Form与Marionette.ItemView
+    _.extend(Views.Test.prototype,_.omit(Backbone.Form.prototype,'render'))
+
 
   });
 
