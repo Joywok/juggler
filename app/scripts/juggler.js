@@ -64,7 +64,7 @@
 
         return $el.html();
     };
-    
+
     Templates.form = _.template('\
         <form class="form-horizontal" role="form">\
           <div data-fieldsets></div>\
@@ -135,7 +135,7 @@
             return Views[item.get('viewType')] || Marionette.getOption(this, "childView") || this.constructor;
         }
     });
-    
+
     Views.Item = Views.ItemView.extend({
         tagName:'li',
         template:_.template('<a data-target="#<%- value %>" data-toggle="tab"><%- name %></a>'),
@@ -149,16 +149,16 @@
             this.trigger('clicked',this.model)
         }
     });
-    
-    
+
+
 
     Views.List = Views.CompositeView.extend({
         tagName:'ul',
         template:_.template(''),
         itemView:Views.Item
     });
-    
-    
+
+
     Views.Form = Backbone.Form.extend({
       template:Juggler.Templates.form,
       events:{
@@ -187,7 +187,7 @@
         Backbone.Form.prototype.render.apply(this,arguments);
         this.trigger('render');
         this.validateEditors();
-        
+
         return this;
       },
       validateField:function(key){
@@ -233,8 +233,8 @@
         });
       }
     });
-    
-    
+
+
     Views.Progressbar = Views.ItemView.extend({
         className:'progress',
         template:_.template('<div class="progress-bar"></div>'),
@@ -277,14 +277,14 @@
           this.destroy();
         }
     });
-    
+
     Views.Node = Marionette.ItemView.extend({
       initialize:function(){
         this.pNode=null;
         this.childNodes=[];
       }
     });
-    
+
     Views.Template = Marionette.LayoutView.extend({
       //template:'aaa',
       initialize:function(){
@@ -335,7 +335,7 @@
         console.log('on siblings')
         this.state='children';
         this.cursor++;
-        
+
         this.triggerMethod('blank')
       },
       onGroup:function(){
@@ -355,29 +355,58 @@
         return this;
       }
     })
-    
-    
+
+
     Views.Test = Views.ItemView.extend({
+      template:Juggler.Templates.form,
       defaults:{
+        skipModelValidate:true,
         submitButton:'提交'
       },
-      template:Juggler.Templates.form,
+      events:{
+        'submit':'onSubmit'
+      },
+      handleEditorEvent:function(e,editor){
+        Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
+        this.triggerMethod(e,editor);
+      },
       serializeData:function(){
         return this.options;
       },
-      getTemplate:function(){
-        var that = this;
-        return function(){
-          return Backbone.Form.prototype.render.apply(that).$el.html()
-        }
-      },
       templateData:function(){
         return this.serializeData();
+      },
+      attachElContent: function(html) {
+        Backbone.Form.prototype.render.apply(this).$el.html();
+        this.errors={};
+        this.validateFields();
+        return this;
+      },
+      validateFields:function(key){
+        for(var i in this.fields){
+          var error = this.fields[i].editor.validate();
+          if(error)this.errors[i]=error;
+        };
+        key&&this.fields[key].validate();
+        this.triggerMethod('validate',this.errors);
+      },
+      onRender:function(){
+        this.errors = {};
+      },
+      onSubmit:function(e){
+        e.preventDefault();
+        this.commit()
+      },
+      onChange:function(editor){
+        this.validateFields(editor.key);
+      },
+      onBlur:function(editor){
+        this.validateFields(editor.key);
       }
     });
-    
+
     //整合Backbone.Form与Marionette.ItemView
-    _.extend(Views.Test.prototype,_.omit(Backbone.Form.prototype,'render'))
+    _.extend(Views.Test.prototype,_.omit(Backbone.Form.prototype,'render','handleEditorEvent'));
 
 
   });
@@ -392,10 +421,10 @@
 
 
   Juggler.on('start',function(){
-    
+
     if(Backbone.history)
         Backbone.history.start();
-        
+
   });
 
 
