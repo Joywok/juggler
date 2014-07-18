@@ -366,6 +366,10 @@
       events:{
         'submit':'onSubmit'
       },
+      initialize:function(){
+        this.errors={};
+        Backbone.Form.prototype.initialize.apply(this,arguments);
+      },
       handleEditorEvent:function(e,editor){
         Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
         this.triggerMethod(e,editor);
@@ -378,8 +382,6 @@
       },
       attachElContent: function(html) {
         Backbone.Form.prototype.render.apply(this).$el.html();
-        this.errors={};
-        this.validateFields();
         return this;
       },
       validateFields:function(key){
@@ -391,7 +393,7 @@
         this.triggerMethod('validate',this.errors);
       },
       onRender:function(){
-        this.errors = {};
+        this.validateFields();
       },
       onSubmit:function(e){
         e.preventDefault();
@@ -406,7 +408,7 @@
     });
 
     //整合Backbone.Form与Marionette.ItemView
-    _.extend(Views.Test.prototype,_.omit(Backbone.Form.prototype,'render','handleEditorEvent'));
+    _.extend(Views.Test.prototype,_.omit(Backbone.Form.prototype,'initialize','render','handleEditorEvent'));
 
 
   });
