@@ -159,82 +159,6 @@
     });
 
 
-    Views.Form = Backbone.Form.extend({
-      template:Juggler.Templates.form,
-      events:{
-        'submit':'onSubmit'
-      },
-      initialize:function(options){
-        Backbone.Form.prototype.initialize.apply(this,arguments);
-        this.options=options;
-        this.errors = {};
-        this.complete=true;
-        this.submitButton = null;
-        this.values = this.getValue();
-        this.on('field:change field:blur',this.validateField,this);
-        this.on('validate',this.toggleSubmit,this);
-        this.model.on('request',this.onRequest,this);
-        this.model.on('change',this.onModelChange,this);
-      },
-      handleEditorEvent:function(e,editor){
-        Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
-        this.trigger('field:'+e,editor.key);
-      },
-      templateData:function(){
-        return {submitButton:this.options.submitButton||false}
-      },
-      render:function(){
-        Backbone.Form.prototype.render.apply(this,arguments);
-        this.trigger('render');
-        this.validateEditors();
-
-        return this;
-      },
-      validateField:function(key){
-        var error = this.fields[key].validate();
-        error?this.errors[key]=error:delete this.errors[key];
-        this.trigger('validate',this.errors);
-      },
-      validateEditors:function(){
-        for(var i in this.fields){
-          var error = this.fields[i].editor.validate();
-          if(error)this.errors[i]=error;
-        };
-        this.trigger('validate',this.errors);
-      },
-      getSubmitButton:function(){
-        return this.submitButton?this.submitButton:this.$el.find(':submit');
-      },
-      toggleSubmit:function(){
-        _.isEmpty(this.errors)&&this.complete
-        ?this.getSubmitButton().removeClass('disabled').removeAttr('disabled')
-        :this.getSubmitButton().addClass('disabled').attr('disabled','disabled')
-      },
-      onSubmit:function(e){
-        e.preventDefault();
-        if(this.commit())return;
-        this.model.save();
-      },
-      onModelChange:function(){
-        var values = this.model.toJSON();
-        this.setValue(_.isEmpty(values)?this.values:values);
-        this.validateEditors();
-      },
-      onRequest:function(model,xhr){
-        var that = this;
-        that.complete=false;
-        this.toggleSubmit();
-        xhr.always(function(){
-          that.complete=true;
-          that.toggleSubmit();
-        })
-        .success(function(){
-          that.setValue(that.values);
-        });
-      }
-    });
-
-
     Views.Progressbar = Views.ItemView.extend({
         className:'progress',
         template:_.template('<div class="progress-bar"></div>'),
@@ -357,7 +281,7 @@
     })
 
 
-    Views.Test = Views.ItemView.extend({
+    Views.Form = Views.ItemView.extend({
       template:Juggler.Templates.form,
       defaults:{
         skipModelValidate:true,
@@ -366,8 +290,16 @@
       events:{
         'submit':'onSubmit'
       },
+      modelEvents:{
+        'request':'onRequest',
+        'error':'onError'
+      },
+      ui:{
+        submit:':submit'
+      },
       initialize:function(){
         this.errors={};
+        this.complete=true;
         Backbone.Form.prototype.initialize.apply(this,arguments);
       },
       handleEditorEvent:function(e,editor){
@@ -387,28 +319,51 @@
       validateFields:function(key){
         for(var i in this.fields){
           var error = this.fields[i].editor.validate();
-          if(error)this.errors[i]=error;
+          error?this.errors[i]=error:delete this.errors[i];
         };
         key&&this.fields[key].validate();
         this.triggerMethod('validate',this.errors);
+      },
+      toggleSubmit:function(){console.log(this.errors)
+        _.isEmpty(this.errors)&&this.complete
+        ?this.ui.submit.removeClass('disabled').removeAttr('disabled')
+        :this.ui.submit.addClass('disabled').attr('disabled','disabled');
       },
       onRender:function(){
         this.validateFields();
       },
       onSubmit:function(e){
         e.preventDefault();
-        this.commit()
+        this.commit()||this.model.save();
       },
       onChange:function(editor){
         this.validateFields(editor.key);
       },
       onBlur:function(editor){
         this.validateFields(editor.key);
+      },
+      onValidate:function(){
+        this.toggleSubmit();
+      },
+      onRequest:function(model,xhr){
+        var that = this;
+        that.complete=false;
+        this.toggleSubmit();
+        xhr.always(function(){
+          that.complete=true;
+          that.toggleSubmit();
+        })
+        .success(function(){
+          that.setValue(that.values);
+        });
+      },
+      onError:function(){
+        console.log(arguments)
       }
     });
 
     //整合Backbone.Form与Marionette.ItemView
-    _.extend(Views.Test.prototype,_.omit(Backbone.Form.prototype,'initialize','render','handleEditorEvent'));
+    _.extend(Views.Form.prototype,_.omit(Backbone.Form.prototype,'initialize','render','handleEditorEvent'));
 
 
   });
