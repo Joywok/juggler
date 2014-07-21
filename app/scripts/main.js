@@ -15,19 +15,21 @@ $(function(){
     var User = Backbone.Model.extend({
         schema: {
             title:      { type: 'Select', options: ['Mr', 'Mrs', 'Ms'] },
-            name:       {type:'Text',validators:['required']},
+            name:       {type:'TagsInput',validators:['required'],typeahead:{},collection:new Juggler.Collection()},
             email:      { validators: ['required', 'email'] },
         },
         url:'test'
     });
 
-    var user = new User();
+    var user = new User({name:['aaa','bbb','ccc']});
      form = new Juggler.Views.Form({model:user,submitButton:'提交'});
      console.log(form)
      
+     Juggler.Dialog.show({message:form.render().el})
+     
     //var progressbar = new Juggler.Views.Progressbar({progress:20});
     
-    Juggler.mainRegion.show(form);
+    //Juggler.mainRegion.show(form);
     //Juggler.progressRegion.show(progressbar);
     
     var $button=$('<button>弹</button>');

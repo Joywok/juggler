@@ -35,16 +35,18 @@
 
 
   Juggler.Controller = Marionette.Controller.extend({
-
+    
   });
 
   Juggler.Model = Backbone.Model.extend({
-
+    
   });
 
   Juggler.Collection = Backbone.Collection.extend({
-
+    url:'test'
   });
+  
+  Juggler.Dialog = BootstrapDialog;
 
 
 
@@ -300,6 +302,7 @@
       initialize:function(){
         this.errors={};
         this.complete=true;
+        this.values = this.getValue();
         Backbone.Form.prototype.initialize.apply(this,arguments);
       },
       handleEditorEvent:function(e,editor){
@@ -324,7 +327,7 @@
         key&&this.fields[key].validate();
         this.triggerMethod('validate',this.errors);
       },
-      toggleSubmit:function(){console.log(this.errors)
+      toggleSubmit:function(){
         _.isEmpty(this.errors)&&this.complete
         ?this.ui.submit.removeClass('disabled').removeAttr('disabled')
         :this.ui.submit.addClass('disabled').attr('disabled','disabled');
