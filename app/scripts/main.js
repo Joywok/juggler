@@ -12,8 +12,13 @@ $(function(){
 
   Juggler.addInitializer(function(){
 
+    
+    var cl = new Juggler.Collection;
+    cl.reset([{name:'aaa',value:'aaa'},{name:'bbb',value:'bbb'}]);
+    
     var User = Backbone.Model.extend({
         schema: {
+            combobox:{type:'ComboBox',options:cl},
             title:      { type: 'Select', options: ['Mr', 'Mrs', 'Ms'] },
             name:       {type:'TagsInput',validators:['required'],typeahead:{},collection:new Juggler.Collection()},
             email:      { validators: ['required', 'email'] },
@@ -21,9 +26,9 @@ $(function(){
         url:'test'
     });
 
-    var user = new User({name:['aaa','bbb','ccc']});
+    var user = new User({name:['aaa','bbb','ccc'],combobox:['aaa','bbb','ccc']});
      form = new Juggler.Views.Form({model:user,submitButton:'提交'});
-     console.log(form)
+     
      
      Juggler.Dialog.show({message:form.render().el})
      

@@ -65,33 +65,6 @@ module.exports = function (grunt) {
             }
         },
 
-        express: {
-          options: {
-            port: 3000,
-            hostname: '*'
-          },
-          livereload: {
-            options: {
-              server: path.resolve('./server'),
-              livereload: true,
-              serverreload: true,
-              bases: [path.resolve('./.tmp'), path.resolve(__dirname, config.app)]
-            }
-          },
-          test: {
-            options: {
-              server: path.resolve('./server'),
-              bases: [path.resolve('./.tmp'), path.resolve(__dirname, 'test')]
-            }
-          },
-          dist: {
-            options: {
-              server: path.resolve('./server'),
-              bases: path.resolve(__dirname, config.dist)
-            }
-          }
-        },
-
         // The actual grunt server settings
         connect: {
             options: {

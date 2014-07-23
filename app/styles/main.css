@@ -12,3 +12,23 @@
     left:0;
     width:100%;
 }
+
+.backbone-forms-dropdown .form-control-wrapper{
+    padding:0;
+}
+
+.backbone-forms-dropdown input{
+    border:0;
+    outline:none;
+    background:none;
+    height:100%;
+}
+
+.backbone-forms-dropdown .close{
+    float:none;
+}
+
+.backbone-forms-dropdown .dropdown-menu{
+    min-width:100%;
+    margin-top:-1px;
+}
