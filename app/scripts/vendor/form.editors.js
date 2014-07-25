@@ -10,7 +10,7 @@
       
       itemLabel:'label',
       
-      itemValue:'val',
+      itemValue:'value',
       
       template:_.template('<div class="input-group"data-toggle="dropdown" >\
       <div class="form-control form-control-wrapper">\
@@ -168,8 +168,8 @@
       
       select:function(e){
           var index = $(e.target).parent().index();
-          console.log(index);
-          this.$el.find('input').val()
+          var item = this.collection.at(index);
+          this.$el.find('input').val(item.get(this.itemValue))
       },
 
       /**
@@ -237,6 +237,7 @@
             var config = {
                 itemValue:'text',
                 source:function(query){
+                    source = $.Deferred();
                     that.collection.fetch({data:{s:query},dataType:'jsonp',jsonpCallback:'test',reset:true});
                     return source;
                 }
@@ -246,7 +247,7 @@
             Form.editors.Text.prototype.initialize.apply(this,arguments);
             
             this.collection = this.collection||this.schema.collection;
-            this.collection.on('reset',function(){
+            this.collection.on('reset',function(){console.log(this.toJSON())
                 source.resolve(this.toJSON());
             });
             
