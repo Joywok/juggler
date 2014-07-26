@@ -15,11 +15,11 @@
       template:_.template('<div class="input-group"data-toggle="dropdown" >\
       <div class="form-control form-control-wrapper">\
       <div class="pull-left form-control-static "></div>\
-      <div class="pull-left"><input class="form-control" /></div>\
+      <div class="input-wrapper"><input class="form-control" /></div>\
       </div>\
       <span class="input-group-btn">\
-      <a class="btn btn-default dropdown-toggle">\
-      <span class="caret"></span></a>\
+      <button type="button" class="btn btn-default dropdown-toggle">\
+      <span class="caret"></span></button>\
       </span>\
       </div>\
       <ul class="dropdown-menu" role="menu"></ul>'),
@@ -45,6 +45,8 @@
         this.$el.addClass('backbone-forms-dropdown');
         
         this.setOptions(this.schema.options);
+
+        this.$input = this.$el.find('input');
         
       },
 
@@ -147,11 +149,11 @@
 
 
       getValue: function() {
-        return this.$el.val();
+        return this.$input.val();
       },
 
       setValue: function(value) {
-        this.$el.val(value);
+        this.$input.val(value);
       },
 
       focus: function() {
@@ -214,13 +216,13 @@
        *                      or as an array of objects e.g. [{val: 543, label: 'Title for object 543'}]
        * @return {String} HTML
        */
-      _arrayToHtml: function(array) {
+      _arrayToHtml: function(array, tagName) {
         var html = [];
-
+        tagName = tagName ? tagName : 'li';
         //Generate HTML
         _.each(array, function(option) {
           
-            html.push('<li><a>'+option.name+'</a></li>');
+            html.push('<'+tagName+'><a>'+option.name+'</a></'+tagName+'>');
           
         }, this);
 
