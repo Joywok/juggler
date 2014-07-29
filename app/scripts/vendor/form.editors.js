@@ -8,9 +8,11 @@
       
       container:'.dropdown-menu',
       
-      itemLabel:'label',
+      itemLabel:'name',
       
       itemValue:'value',
+
+      multi:false,
       
       template:_.template('<div class="input-group"data-toggle="dropdown" >\
       <div class="form-control form-control-wrapper">\
@@ -46,7 +48,9 @@
         
         this.setOptions(this.schema.options);
 
-        this.$input = this.$el.find('input');
+        if(this.multi){
+            this.selectedValues = new Backbone.Collection();
+        }
         
       },
 
@@ -55,6 +59,8 @@
         this.$el.html(this.template());
         
         this.renderOptions(this.schema.options);
+
+        this.$input = this.$el.find('input');
 
         return this;
       },
@@ -149,11 +155,12 @@
 
 
       getValue: function() {
-        return this.$input.val();
+        return this.multi?this.selectedValues.toJSON():this.$input.val();
       },
 
-      setValue: function(value) {
-        this.$input.val(value);
+      setValue: function(item) {
+        this.$el.find('input').val(item[this.itemLabel]);
+        this.multi&&this.selectedValues.add(item);
       },
 
       focus: function() {
@@ -171,7 +178,7 @@
       select:function(e){
           var index = $(e.target).parent().index();
           var item = this.collection.at(index);
-          this.$el.find('input').val(item.get(this.itemValue))
+          this.setValue(item.toJSON());
       },
 
       /**
