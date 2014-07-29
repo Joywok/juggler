@@ -307,7 +307,7 @@
       },
       handleEditorEvent:function(e,editor){
         Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
-        this.triggerMethod(e,editor);
+        this.triggerMethod('item'+e,editor);
       },
       serializeData:function(){
         return this.options;
@@ -339,10 +339,10 @@
         e.preventDefault();
         this.commit()||this.model.save();
       },
-      onChange:function(editor){
+      onItemChange:function(editor){
         this.validateFields(editor.key);
       },
-      onBlur:function(editor){
+      onItemBlur:function(editor){
         this.validateFields(editor.key);
       },
       onValidate:function(){

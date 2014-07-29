@@ -61,6 +61,8 @@
         this.renderOptions(this.schema.options);
 
         this.$input = this.$el.find('input');
+        
+        this.trigger('render',this);
 
         return this;
       },
