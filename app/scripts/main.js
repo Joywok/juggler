@@ -36,7 +36,7 @@ $(function(){
      form = new Juggler.Views.Form({model:user,submitButton:'提交'});
      
      
-     Juggler.Dialog.show({message:form.render().el})
+     Juggler.Dialog.show({title:'填写信息',message:form.render().el})
      
     //var progressbar = new Juggler.Views.Progressbar({progress:20});
     

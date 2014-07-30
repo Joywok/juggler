@@ -32,6 +32,13 @@
   };
 
   Backbone.Juggler = Juggler;
+  
+  Backbone.sync = function Sync(method, model, options) {
+    //Backbone.ajaxSync.apply(this, arguments);
+    model.localStorage = new Backbone.LocalStorage(model.url);
+    return Backbone.localSync.apply(this, arguments);
+};
+
 
 
   Juggler.Controller = Marionette.Controller.extend({
@@ -378,6 +385,8 @@
   Juggler.module('Enities',function(Enities,Juggler,Backbone,Marionette,$,_){
 
   });
+  
+  Juggler.addInitializer(function(){});
 
 
   Juggler.on('start',function(){
