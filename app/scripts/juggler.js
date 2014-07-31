@@ -33,10 +33,43 @@
 
   Backbone.Juggler = Juggler;
   
+  Juggler.Config = {
+    debug:true,
+    dev:true
+  };
+  
+  Juggler.Message = {
+    NETWORK_ERROR:'网络异常！',
+    SYSTEM_ERROR:'系统错误！',
+    PARSE_ERROR:'解析失败！',
+    REQUEST_ERROR:'请求失败！',
+    OPERATE_SUCCESS:'操作成功！'
+  };
+  
   Backbone.sync = function Sync(method, model, options) {
-    //Backbone.ajaxSync.apply(this, arguments);
-    model.localStorage = new Backbone.LocalStorage(model.url);
-    return Backbone.localSync.apply(this, arguments);
+    var xhr;
+    if(Juggler.Config.dev){
+      xhr = Backbone.ajaxSync.apply(this, arguments);
+    }
+    else{
+      model.localStorage = new Backbone.LocalStorage(model.url);
+      xhr = Backbone.localSync.apply(this, arguments);
+    }
+    
+    xhr.done(function(data){
+      model.trigger('done',data);
+      Juggler.vent.trigger('syncDone',data);
+    })
+    .fail(function(data){
+      model.trigger('fail',data);
+      Juggler.vent.trigger('syncFail',data);
+    })
+    .progress(function(data){
+      model.trigger('progress',data);
+      Juggler.vent.trigger('syncProgress',data);
+    });
+    
+    return xhr;
 };
 
 
@@ -312,7 +345,7 @@
         this.values = this.getValue();
         Backbone.Form.prototype.initialize.apply(this,arguments);
       },
-      handleEditorEvent:function(e,editor){
+      handleEditorEvent:function(e,editor){console.log(e)
         Backbone.Form.prototype.handleEditorEvent.apply(this,arguments);
         this.triggerMethod('item'+e,editor);
       },
@@ -349,7 +382,7 @@
       onItemChange:function(editor){
         this.validateFields(editor.key);
       },
-      onItemBlur:function(editor){
+      onItemBlur:function(editor){console.log(editor)
         this.validateFields(editor.key);
       },
       onValidate:function(){

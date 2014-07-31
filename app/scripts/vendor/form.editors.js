@@ -247,6 +247,7 @@
             var that = this;
             var config = {
                 itemValue:'text',
+                freeInput:true,
                 source:function(query){
                     source = $.Deferred();
                     that.collection.fetch({data:{s:query},dataType:'jsonp',jsonpCallback:'test',reset:true});

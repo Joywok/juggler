@@ -26,7 +26,7 @@ $(function(){
         schema: {
             combobox:{type:'ComboBox',options:cl},
             title:      { type: 'Select', options: ['Mr', 'Mrs', 'Ms'] },
-            name:       {type:'TagsInput',validators:['required'],typeahead:{},collection:new Collection()},
+            name:       {type:'TagsInput',typeahead:{},collection:new Collection()},
             email:      { validators: ['required', 'email'] },
         },
         url:'test'
